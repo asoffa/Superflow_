@@ -19,6 +19,7 @@
 using namespace std;
 
 namespace sflow {
+    LeptonVector scratchLeptonVector = {};
 
     ////////////////////////////////////////////
     // Constructor
@@ -199,7 +200,24 @@ namespace sflow {
         sl_->baseTaus = &m_baseTaus;
         sl_->baseJets = &m_baseJets;
 
-        sl_->leptons = &m_signalLeptons;
+        scratchLeptonVector.clear();
+        if (!doFakes) sl_->leptons = &m_signalLeptons;
+        else {
+            if (m_baseLeptons.size() == fakesTightLooseConfig.size()) {
+                // populate `leptons` with baseline leptons to be *treated* as signal for fakes
+                for (uint i = 0; i < fakesTightLooseConfig.size(); ++i) {
+                    char & c = fakesTightLooseConfig[i];
+                    if (c == '1') scratchLeptonVector.push_back(m_baseLeptons[i]);
+                    else if (c != '0') {
+                        cout << "ERROR: Superflow::attach_superlink: illegal `fakesTightLooseConfig`: " << fakesTightLooseConfig << "\n";
+                        exit(1);
+                    }
+                }
+            }
+            sl_->leptons = &scratchLeptonVector;
+        }
+
+        sl_->signalLeptons = &m_signalLeptons;
         sl_->electrons = &m_signalElectrons;
         sl_->muons = &m_signalMuons;
         sl_->taus = &m_signalTaus;
@@ -342,8 +360,12 @@ namespace sflow {
                     suffix << "_" << m_outputFileNameSuffix;
                 else suffix << "";
 
-                sfile_name_ << m_data_stream2string[m_stream] << "_" << data_run << suffix.str() << ".root";
+                sfile_name_ << m_data_stream2string[m_stream] << "_" << data_run << suffix.str();
                 cout << app_name << "Superflow::Init    Setting output file name to: " << sfile_name_.str() << endl;
+
+                if (doQflip) sfile_name_ << "_qflip";
+                if (doFakes) sfile_name_ << "_fakes_" << fakesTightLooseConfig;
+                sfile_name_ << ".root";
                 
                 m_outputFileName = sfile_name_.str();
                 m_entry_list_FileName += m_data_stream2string[m_stream] + "_" + data_run + suffix.str() + ".root";

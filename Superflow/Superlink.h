@@ -48,7 +48,12 @@ namespace sflow {
 
         ElectronVector* electrons;      ///< signal electrons
         MuonVector*     muons;          ///< signal muons
-        LeptonVector*   leptons;        ///< signal leptons
+
+        /// "signal" leptons (leptons to be *treated* as signal when running fakes,
+        /// same as `signalLeptons` when not running fakes)
+        LeptonVector*   leptons;
+
+        LeptonVector*   signalLeptons;  ///< signal leptons (leptons that pass signal criterion, even for fakes)
         TauVector*      taus;           ///< signal taus
         JetVector*      jets;           ///< signal jets
 

@@ -51,6 +51,16 @@ namespace sflow {
         Superflow();
         ~Superflow();
 
+        bool   doQflip = false;
+        bool   doFakes = false;
+
+        /// Specifies tight-loose config baseline lepton when running fakes,
+        /// e.g. "101" <--> require exactly three baseline leptons and treat
+        /// them as signal, not signal, signal, respectively. Used only when
+        /// `doFakes` is set to true.
+        string fakesTightLooseConfig;
+
+
         // Cut Operators
         Superflow& operator<<(CutName cut_);
         Superflow& operator<<(std::function<bool(Superlink*)> cut_);

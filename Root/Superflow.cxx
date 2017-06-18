@@ -201,8 +201,7 @@ namespace sflow {
         sl_->baseJets = &m_baseJets;
 
         scratchLeptonVector.clear();
-        if (!doFakes) sl_->leptons = &m_signalLeptons;
-        else {
+        if (doFakes) {
             if (m_baseLeptons.size() == fakesTightLooseConfig.size()) {
                 // populate `leptons` with baseline leptons to be *treated* as signal for fakes
                 for (uint i = 0; i < fakesTightLooseConfig.size(); ++i) {
@@ -216,6 +215,8 @@ namespace sflow {
             }
             sl_->leptons = &scratchLeptonVector;
         }
+        else if (doQflip) sl_->leptons = &m_baseLeptons;  // treat all baseline leptons as signal for qflip
+        else              sl_->leptons = &m_signalLeptons;
 
         sl_->signalLeptons = &m_signalLeptons;
         sl_->electrons = &m_signalElectrons;

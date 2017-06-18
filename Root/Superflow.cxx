@@ -363,6 +363,7 @@ namespace sflow {
                 sfile_name_ << m_data_stream2string[m_stream] << "_" << data_run << suffix.str();
                 cout << app_name << "Superflow::Init    Setting output file name to: " << sfile_name_.str() << endl;
 
+                if (!doQflip && !doFakes) sfile_name_ << "_data";
                 if (doQflip) sfile_name_ << "_qflip";
                 if (doFakes) sfile_name_ << "_fakes_" << fakesTightLooseConfig;
                 sfile_name_ << ".root";
